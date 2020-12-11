@@ -19,6 +19,7 @@ namespace Praca_dyplomowa.Entities
 
         // Region w którym się znajduje
         public Region Region { get; set; }
+        public int RegionId { get; set; }
         public IList<Route> Routes { get; set; }
     }
 }

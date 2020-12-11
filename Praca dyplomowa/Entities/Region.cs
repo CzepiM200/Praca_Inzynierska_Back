@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Praca_dyplomowa.Entities
 {
@@ -13,6 +14,7 @@ namespace Praca_dyplomowa.Entities
 
         // Użytkownik do którego należy
         public User User { get; set; }
+        public int UserId { get; set; }
         public IList<Place> Places { get; set; }
     }
 }
