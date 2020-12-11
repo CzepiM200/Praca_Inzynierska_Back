@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Praca_dyplomowa.Context;
 
 namespace Praca_dyplomowa.Migrations
 {
     [DbContext(typeof(ProgramContext))]
-    partial class ProgramContextModelSnapshot : ModelSnapshot
+    [Migration("20201210183008_FixRegion")]
+    partial class FixRegion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -188,13 +190,13 @@ namespace Praca_dyplomowa.Migrations
             modelBuilder.Entity("Praca_dyplomowa.Entities.Place", b =>
                 {
                     b.HasOne("Praca_dyplomowa.Entities.Region", "Region")
-                        .WithMany()
+                        .WithMany("Places")
                         .HasForeignKey("RegionId");
                 });
 
             modelBuilder.Entity("Praca_dyplomowa.Entities.Region", b =>
                 {
-                    b.HasOne("Praca_dyplomowa.Entities.User", null)
+                    b.HasOne("Praca_dyplomowa.Entities.User", "User")
                         .WithMany("UserRegions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
