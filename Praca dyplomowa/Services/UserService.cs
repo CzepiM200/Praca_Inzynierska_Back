@@ -60,21 +60,30 @@ namespace Praca_dyplomowa.Services
             return _context.Users.Find(id);
         }
 
+        // Tworzenie nowego użytkownika
         public User Create(User user, string password)
         {
-            // validation
+            // Sprawdzanie czy hasło zostało wprowadzone
             if (string.IsNullOrWhiteSpace(password))
-                throw new AppException("Password is required");
+                throw new AppException("001. Password is required");
 
+            // Sprawdzanie czy nazwa użytkownika występuje już w bazie
             if (_context.Users.Any(x => x.UserName == user.UserName))
-                throw new AppException("UserName \"" + user.UserName + "\" is already taken");
+                throw new AppException("002. UserName \"" + user.UserName + "\" is already taken");
+
+            // Sprawdzanie czy email występuje już w bazie
+            if (_context.Users.Any(x => x.Email == user.Email))
+                throw new AppException("003. Email \"" + user.Email + "\" is already taken");
 
             byte[] passwordHash, passwordSalt;
+            // Tworzenie hash i salt
             CreatePasswordHash(password, out passwordHash, out passwordSalt);
 
+            // Stawianie hash i salt nowemu użytkownikowi
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
 
+            // Dodawanie nowego użytkownika do bazy
             _context.Users.Add(user);
             _context.SaveChanges();
 
@@ -129,6 +138,12 @@ namespace Praca_dyplomowa.Services
             }
         }
 
+        /// <summary>
+        /// Tworznie hash SHA512 dla nowego użytkownika
+        /// </summary>
+        /// <param name="password">Password inserted during registering in browser</param>
+        /// <param name="passwordHash">Generated Hash [out]</param>
+        /// <param name="passwordSalt">Generated Salt [out]</param>
         private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
             if (password == null) throw new ArgumentNullException("password");

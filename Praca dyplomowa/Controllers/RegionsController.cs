@@ -8,15 +8,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.AspNetCore.Authorization;
 
 namespace Praca_dyplomowa.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Helpers.Authorize]
     public class RegionsController : ControllerBase
     {
+        public User CurrentUser => (User)HttpContext.Items["User"];
         private readonly ProgramContext _context;
 
         public RegionsController(ProgramContext context)
@@ -79,7 +80,7 @@ namespace Praca_dyplomowa.Controllers
             var userRoutes = _context.Routes
                 .Include(r => r.Place)
                 .Include(p => p.Place.Region)
-                .Where(r => r.Place.Region.UserId == userId.userId);
+                .Where(r => r.Place.Region.UserId == CurrentUser.UserId);
 
             var returnData = new List<RouteJSON>();
             foreach (var route in userRoutes)

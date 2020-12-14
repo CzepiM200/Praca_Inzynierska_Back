@@ -30,12 +30,19 @@ namespace Praca_dyplomowa
         {
             services.AddCors();
             services.AddControllers();
+
+            // ??? - !
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             // configure strongly typed settings objects
             var appSettingsSection = _configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
 
+            // configure DI for application services
+            services.AddScoped<IUserService, UserService>();
+
+
+            // connection string do bazy
             services.AddDbContext<ProgramContext>(options =>
                 options.UseMySql("server=localhost;port=3306;database=organizer;uid=root;password=admin"));
 
@@ -46,38 +53,37 @@ namespace Praca_dyplomowa
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(x =>
-            {
-                x.Events = new JwtBearerEvents
-                {
-                    OnTokenValidated = context =>
-                    {
-                        var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
-                        var userId = int.Parse(context.Principal.Identity.Name);
-                        var user = userService.GetById(userId);
-                        if (user == null)
-                        {
-                            // return unauthorized if user no longer exists
-                            context.Fail("Unauthorized");
-                        }
-                        return Task.CompletedTask;
-                    }
-                };
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                };
+                //x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             });
+            //.AddJwtBearer(x =>
+            //{
+            //    x.Events = new JwtBearerEvents
+            //    {
+            //        OnTokenValidated = context =>
+            //        {
+            //            var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
+            //            var userId = int.Parse(context.Principal.Identity.Name);
+            //            var user = userService.GetById(userId);
+            //            if (user == null)
+            //            {
+            //                // return unauthorized if user no longer exists
+            //                context.Fail("Unauthorized");
+            //            }
+            //            return Task.CompletedTask;
+            //        }
+            //    };
+            //    x.RequireHttpsMetadata = false;
+            //    x.SaveToken = true;
+            //    x.TokenValidationParameters = new TokenValidationParameters
+            //    {
+            //        ValidateIssuerSigningKey = true,
+            //        IssuerSigningKey = new SymmetricSecurityKey(key),
+            //        ValidateIssuer = false,
+            //        ValidateAudience = false
+            //    };
+            //});
 
-            // configure DI for application services
-            services.AddScoped<IUserService, UserService>();
+
 
         }
 
@@ -90,22 +96,39 @@ namespace Praca_dyplomowa
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseExceptionHandler("/Error");
+                // HTTP Strict Transport Security Protocol (HSTS) Middleware (UseHsts) adds the Strict-Transport-Security header.
+                app.UseHsts();
+            }
 
+            // HTTPS Redirection Middleware (UseHttpsRedirection) redirects HTTP requests to HTTPS.
             app.UseHttpsRedirection();
+
+            // Cookie Policy Middleware (UseCookiePolicy) conforms the app to the EU General Data Protection Regulation (GDPR) regulations.
+
+            // Routing Middleware (UseRouting) to route requests.
+            app.UseRouting();
+
 
             app.UseCors(x => x
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader());
 
-            app.UseRouting();
-
             // Sprawdzenie kim jest u¿ytkownik
+            // Authentication Middleware (UseAuthentication) attempts to authenticate the user before they're allowed access to secure resources.
             app.UseAuthentication();
 
             // Sprawdzenie uprawnieñ u¿ytkownika
+            // Authorization Middleware (UseAuthorization) authorizes a user to access secure resources.
             app.UseAuthorization();
 
+            // custom jwt auth middleware
+            app.UseMiddleware<JwtMiddleware>();
+
+            // Endpoint Routing Middleware (UseEndpoints with MapRazorPages) to add Razor Pages endpoints to the request pipeline.
             app.UseEndpoints(endpoints =>
             {
                 //endpoints.MapControllers();

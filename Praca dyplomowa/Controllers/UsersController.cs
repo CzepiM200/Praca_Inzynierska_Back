@@ -15,7 +15,7 @@ using Praca_dyplomowa.Models;
 
 namespace Praca_dyplomowa.Controllers
 {
-    [Authorize]
+    
     [ApiController]
     [Route("[controller]")]
     public class UsersController : ControllerBase
@@ -34,7 +34,6 @@ namespace Praca_dyplomowa.Controllers
             _appSettings = appSettings.Value;
         }
 
-        [AllowAnonymous]
         [HttpPost("authenticate")]
         public IActionResult Authenticate([FromBody] AuthenticateModel model)
         {
@@ -49,7 +48,11 @@ namespace Praca_dyplomowa.Controllers
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, user.UserId.ToString())
+                    new Claim("id", user.UserId.ToString()),
+                    new Claim("kielba", "kieeeelba"),
+                    new Claim("papaja", "papaaaaaja"),
+                    new Claim("mienso", "miensoooo"),
+                    new Claim("cos", "xDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"),
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -68,7 +71,6 @@ namespace Praca_dyplomowa.Controllers
             });
         }
 
-        [AllowAnonymous]
         [HttpPost("register")]
         public IActionResult Register([FromBody] RegisterModel model)
         {
@@ -88,13 +90,14 @@ namespace Praca_dyplomowa.Controllers
             }
         }
 
-        //[HttpGet]
-        //public IActionResult GetAll()
-        //{
-        //    var users = _userService.GetAll();
-        //    var model = _mapper.Map<IList<UserModel>>(users);
-        //    return Ok(model);
-        //}
+        [Helpers.Authorize]
+        [HttpGet("all")]
+        public IActionResult GetAll()
+        {
+            var users = _userService.GetAll();
+            var model = _mapper.Map<IList<UserModel>>(users);
+            return Ok(model);
+        }
 
         //[HttpGet("{id}")]
         //public IActionResult GetById(int id)
