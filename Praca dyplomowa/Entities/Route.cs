@@ -31,5 +31,6 @@ namespace Praca_dyplomowa.Entities
 
         // Miejsce w którym się znajduje
         public Place Place { get; set; }
+        public int PlaceId { get; set; }
     }
 }

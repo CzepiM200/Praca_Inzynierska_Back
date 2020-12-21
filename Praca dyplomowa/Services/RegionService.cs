@@ -22,8 +22,8 @@ namespace Praca_dyplomowa.Services
         bool DeletePlace(User CurrentUser, RemoveIdJSON removeId);
 
         List<RouteJSON> GetRoutes(User CurrentUser);
-        bool EditRoute(User CurrentUser, RegionJSON modifiedRoute);
-        bool AddRoute(User CurrentUser, NewRegionJSON newRoute);
+        bool EditRoute(User CurrentUser, EditRouteJSON modifiedRoute);
+        bool AddRoute(User CurrentUser, NewRouteJSON newRoute);
         bool DeleteRoute(User CurrentUser, RemoveIdJSON removeId);
 
 
@@ -285,19 +285,95 @@ namespace Praca_dyplomowa.Services
             return returnData;
         }
 
-        public bool EditRoute(User CurrentUser, RegionJSON region)
+        public bool EditRoute(User CurrentUser, EditRouteJSON modifiedRoute)
         {
-            throw new NotImplementedException();
+            var route = _context.Routes
+                .FirstOrDefault(r => r.RouteId == modifiedRoute.RouteId && r.Place.Region.UserId == CurrentUser.UserId);
+
+
+            if (route != null)
+            {
+                try
+                {
+                    route.RouteName = modifiedRoute.RouteName;
+                    route.RouteType = modifiedRoute.RouteType;
+                    route.Length = modifiedRoute.Length;
+                    route.HeightDifference = modifiedRoute.HeightDifference;
+                    route.Accomplish = modifiedRoute.Accomplish;
+                    route.Material = modifiedRoute.Material;
+                    route.Scale = modifiedRoute.Scale;
+                    route.Rating = modifiedRoute.Rating;
+                    route.DescentPosition = modifiedRoute.DescentPosition;
+                    _context.SaveChanges();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            else
+                return false;
         }
 
-        public bool AddRoute(User CurrentUser, NewRegionJSON region)
+        public bool AddRoute(User CurrentUser, NewRouteJSON newRoute)
         {
-            throw new NotImplementedException();
+            var ifRouteExist = _context.Routes
+                .Count(r => r.RouteName.Equals(newRoute.RouteName) && r.Place.Region.UserId == CurrentUser.UserId);
+
+            var ifPlaceExist = _context.Places
+                .Count(p => p.PlaceId == newRoute.BelongPlaceId && p.Region.UserId == CurrentUser.UserId);
+
+            if (ifRouteExist == 0 && ifPlaceExist == 1)
+            {
+                try
+                {
+                    var route = new Route
+                    {
+                        RouteName = newRoute.RouteName,
+                        RouteType = newRoute.RouteType,
+                        Length = newRoute.Length,
+                        HeightDifference = newRoute.HeightDifference,
+                        Accomplish = newRoute.Accomplish,
+                        Material = newRoute.Material,
+                        Scale = newRoute.Scale,
+                        Rating = newRoute.Rating,
+                        DescentPosition = newRoute.DescentPosition,
+                        PlaceId = newRoute.BelongPlaceId,
+                    };
+                    _context.Routes.Add(route);
+                    _context.SaveChanges();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            else
+                return false;
         }
 
         public bool DeleteRoute(User CurrentUser, RemoveIdJSON removeId)
         {
-            throw new NotImplementedException();
+            var route = _context.Routes
+                .FirstOrDefault(r => r.RouteId == removeId.Id && r.Place.Region.UserId == CurrentUser.UserId);
+
+            if (route != null)
+            {
+                try
+                {
+                    _context.Routes.Remove(route);
+                    _context.SaveChanges();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            else
+                return false;
         }
     }
 }

@@ -120,9 +120,9 @@ namespace Praca_dyplomowa.Controllers
         }
 
         [HttpPut("routes/edit")]
-        public IActionResult EditRoute([FromBody] EditPlaceJSON modifiedPlace)
+        public IActionResult EditRoute([FromBody] EditRouteJSON modifiedRoute)
         {
-            bool result = _regionService.EditPlace(CurrentUser, modifiedPlace);
+            bool result = _regionService.EditRoute(CurrentUser, modifiedRoute);
 
             if (result)
                 return Ok();
@@ -130,9 +130,9 @@ namespace Praca_dyplomowa.Controllers
         }
 
         [HttpPost("routes/add")]
-        public IActionResult AddRoute([FromBody] NewPlaceJSON newPlace)
+        public IActionResult AddRoute([FromBody] NewRouteJSON newRoute)
         {
-            bool result = _regionService.AddPlace(CurrentUser, newPlace);
+            bool result = _regionService.AddRoute(CurrentUser, newRoute);
 
             if (result)
                 return Ok();
@@ -142,7 +142,7 @@ namespace Praca_dyplomowa.Controllers
         [HttpDelete("routes/remove")]
         public IActionResult DeleteRoute([FromBody] RemoveIdJSON id)
         {
-            bool result = _regionService.DeletePlace(CurrentUser, id);
+            bool result = _regionService.DeleteRoute(CurrentUser, id);
 
             if (result)
                 return Ok();
