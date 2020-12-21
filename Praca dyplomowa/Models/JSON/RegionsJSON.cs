@@ -38,4 +38,9 @@ namespace Praca_dyplomowa.Models
 
         public PlaceJSON BelongPlace { get; set; }
     }
+
+    public class RemoveIdJSON
+    {
+        public int Id { get; set; }
+    }
 }

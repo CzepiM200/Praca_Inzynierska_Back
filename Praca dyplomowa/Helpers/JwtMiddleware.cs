@@ -21,7 +21,6 @@ namespace Praca_dyplomowa.Helpers
             var user = (User)context.HttpContext.Items["User"];
             if (user == null)
             {
-                // not logged in
                 context.Result = new JsonResult(new { message = "Unauthorizeeeeddddddddddd" }) { StatusCode = StatusCodes.Status401Unauthorized };
             }
         }

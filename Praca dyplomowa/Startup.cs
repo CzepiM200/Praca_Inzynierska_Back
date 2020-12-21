@@ -41,6 +41,8 @@ namespace Praca_dyplomowa
             // configure DI for application services
             services.AddScoped<IUserService, UserService>();
 
+            // configure Regions for application services
+            services.AddScoped<IRegionService, RegionService>();
 
             // connection string do bazy
             services.AddDbContext<ProgramContext>(options =>
