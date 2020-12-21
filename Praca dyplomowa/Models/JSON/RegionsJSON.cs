@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Praca_dyplomowa.Models
 {
@@ -10,6 +7,12 @@ namespace Praca_dyplomowa.Models
         public int RegionId { get; set; }
         public String RegionName { get; set; }
     }
+
+    public class NewRegionJSON
+    {
+        public String RegionName { get; set; }
+    }
+
 
     public class PlaceJSON
     {
@@ -21,6 +24,16 @@ namespace Praca_dyplomowa.Models
 
         public RegionJSON BelongRegion { get; set; }
     }
+
+    public class NewPlaceJSON
+    {
+        public String PlaceName { get; set; }
+        public String Latitude { get; set; }
+        public String Longitude { get; set; }
+        public int PlaceType { get; set; }
+        public int BelongRegionId { get; set; }
+    }
+
 
     public class RouteJSON
     {
@@ -38,6 +51,22 @@ namespace Praca_dyplomowa.Models
 
         public PlaceJSON BelongPlace { get; set; }
     }
+
+    public class NewRouteJSON
+    {
+        public String RouteName { get; set; }
+        public int RouteType { get; set; }
+        public int Length { get; set; }
+        public int HeightDifference { get; set; }
+        public int Accomplish { get; set; }
+        public string Material { get; set; }
+        public int Scale { get; set; }
+        public String Rating { get; set; }
+        public int Rings { get; set; }
+        public int DescentPosition { get; set; }
+        public int BelongPlaceId { get; set; }
+    }
+
 
     public class RemoveIdJSON
     {

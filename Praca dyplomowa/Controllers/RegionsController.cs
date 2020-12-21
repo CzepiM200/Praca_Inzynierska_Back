@@ -42,11 +42,13 @@ namespace Praca_dyplomowa.Controllers
         [HttpPut("regions/edit")]
         public void EditRegion([FromBody] string value)
         {
+
         }
 
         [HttpPost("regions/add")]
         public void AddRegion([FromBody] string value)
         {
+
         }
 
         [HttpDelete("regions/remove")]
