@@ -1,22 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Praca_dyplomowa.Context;
+using System.Linq;
 using Praca_dyplomowa.Entities;
 using Praca_dyplomowa.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
 using Praca_dyplomowa.Services;
+using Praca_dyplomowa.Helpers;
 
 
 namespace Praca_dyplomowa.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Helpers.Authorize]
+    [Authorize]
     public class RegionsController : ControllerBase
     {
         public User CurrentUser => (User)HttpContext.Items["User"];
@@ -33,29 +27,42 @@ namespace Praca_dyplomowa.Controllers
         {
             var returnData = _regionService.GetRegions(CurrentUser);
 
-            if (returnData.Count() == 0)
+            if (returnData == null)
                 return NoContent();
 
             return Ok(returnData);
         }
 
         [HttpPut("regions/edit")]
-        public void EditRegion([FromBody] string value)
+        public IActionResult EditRegion([FromBody] RegionJSON modifiedRegion)
         {
+            bool result = _regionService.EditRegion(CurrentUser, modifiedRegion);
 
+            if (result)
+                return Ok();
+            return BadRequest();
         }
 
         [HttpPost("regions/add")]
-        public void AddRegion([FromBody] string value)
+        public IActionResult AddRegion([FromBody] NewRegionJSON newRegion)
         {
+            bool result = _regionService.AddRegion(CurrentUser, newRegion);
 
+            if (result)
+                return Ok();
+            return BadRequest();
         }
 
         [HttpDelete("regions/remove")]
-        public void DeleteRegion([FromBody] RemoveIdJSON id)
+        public IActionResult DeleteRegion([FromBody] RemoveIdJSON id)
         {
+            bool result = _regionService.DeleteRegion(CurrentUser, id);
 
+            if (result)
+                return Ok();
+            return BadRequest();
         }
+
 
         [HttpGet]
         [Route("places")]
@@ -63,7 +70,7 @@ namespace Praca_dyplomowa.Controllers
         {
             var returnData = _regionService.GetPlaces(CurrentUser);
 
-            if (returnData.Count() == 0)
+            if (returnData == null)
                 return NoContent();
 
             return Ok(returnData);
@@ -75,7 +82,7 @@ namespace Praca_dyplomowa.Controllers
         {
             var returnData = _regionService.GetRoutes(CurrentUser);
 
-            if (returnData.Count() == 0)
+            if (returnData == null)
                 return NoContent();
 
             return Ok(returnData);

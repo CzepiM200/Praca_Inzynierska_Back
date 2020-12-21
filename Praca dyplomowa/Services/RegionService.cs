@@ -12,8 +12,19 @@ namespace Praca_dyplomowa.Services
     public interface IRegionService
     {
         List<RegionJSON> GetRegions(User CurrentUser);
+        bool EditRegion(User CurrentUser, RegionJSON modifiedRegion);
+        bool AddRegion(User CurrentUser, NewRegionJSON newRegion);
+        bool DeleteRegion(User CurrentUser, RemoveIdJSON removeId);
+
         List<PlaceJSON> GetPlaces(User CurrentUser);
+        bool EditPlace(User CurrentUser, RegionJSON modifiedPlace);
+        bool AddPlace(User CurrentUser, NewRegionJSON newPlace);
+        bool DeletePlace(User CurrentUser, RemoveIdJSON removeId);
+
         List<RouteJSON> GetRoutes(User CurrentUser);
+        bool EditRoute(User CurrentUser, RegionJSON modifiedRoute);
+        bool AddRoute(User CurrentUser, NewRegionJSON newRoute);
+        bool DeleteRoute(User CurrentUser, RemoveIdJSON removeId);
 
 
     }
@@ -48,6 +59,78 @@ namespace Praca_dyplomowa.Services
             return returnData;
         }
 
+        public bool EditRegion(User CurrentUser, RegionJSON modifiedRegion)
+        {
+            var region = _context.Regions
+                .FirstOrDefault(r => r.RegionId == modifiedRegion.RegionId && r.UserId == CurrentUser.UserId);
+
+            if (region != null)
+            {
+                try
+                {
+                    region.RegionName = modifiedRegion.RegionName;
+                    _context.SaveChanges();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            else
+                return false;
+        }
+
+        public bool AddRegion(User CurrentUser, NewRegionJSON newRegion)
+        {
+            var ifExist = _context.Regions
+                .Count(r => r.RegionName.Equals(newRegion.RegionName) && r.UserId == CurrentUser.UserId);
+
+            if(ifExist == 0)
+            {
+                try
+                {
+                    var region = new Region
+                    {
+                        RegionName = newRegion.RegionName,
+                        UserId = CurrentUser.UserId,
+                        User = CurrentUser,
+                    };
+                    _context.Regions.Add(region);
+                    _context.SaveChanges();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            else
+                return false;
+        }
+
+        public bool DeleteRegion(User CurrentUser, RemoveIdJSON removeId)
+        {
+            var region = _context.Regions
+                .FirstOrDefault(r => r.RegionId == removeId.Id && r.UserId == CurrentUser.UserId);
+
+            if (region != null)
+            {
+                try
+                {
+                    _context.Regions.Remove(region);
+                    _context.SaveChanges();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            else
+                return false;
+        }
+
         public List<PlaceJSON> GetPlaces(User CurrentUser)
         {
             var userPlaces = _context.Places
@@ -75,6 +158,38 @@ namespace Praca_dyplomowa.Services
                 });
             }
             return returnData;
+        }
+
+        public bool EditPlace(User CurrentUser, PlaceJSON modifiedPlace)
+        {
+            var place = _context.Places
+                .FirstOrDefault(r => r.PlaceId == modifiedPlace.PlaceId && r.Region.UserId == CurrentUser.UserId);
+
+            if (place != null)
+            {
+                try
+                {
+                    //place.
+                    _context.SaveChanges();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            else
+                return false;
+        }
+
+        public bool AddPlace(User CurrentUser, NewRegionJSON region)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DeletePlace(User CurrentUser, RemoveIdJSON removeId)
+        {
+            throw new NotImplementedException();
         }
 
         public List<RouteJSON> GetRoutes(User CurrentUser)
@@ -119,6 +234,21 @@ namespace Praca_dyplomowa.Services
             }
 
             return returnData;
+        }
+
+        public bool EditRoute(User CurrentUser, RegionJSON region)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool AddRoute(User CurrentUser, NewRegionJSON region)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DeleteRoute(User CurrentUser, RemoveIdJSON removeId)
+        {
+            throw new NotImplementedException();
         }
     }
 }
