@@ -17,8 +17,8 @@ namespace Praca_dyplomowa.Services
         bool DeleteRegion(User CurrentUser, RemoveIdJSON removeId);
 
         List<PlaceJSON> GetPlaces(User CurrentUser);
-        bool EditPlace(User CurrentUser, RegionJSON modifiedPlace);
-        bool AddPlace(User CurrentUser, NewRegionJSON newPlace);
+        bool EditPlace(User CurrentUser, EditPlaceJSON modifiedPlace);
+        bool AddPlace(User CurrentUser, NewPlaceJSON newPlace);
         bool DeletePlace(User CurrentUser, RemoveIdJSON removeId);
 
         List<RouteJSON> GetRoutes(User CurrentUser);
@@ -160,16 +160,20 @@ namespace Praca_dyplomowa.Services
             return returnData;
         }
 
-        public bool EditPlace(User CurrentUser, PlaceJSON modifiedPlace)
+        public bool EditPlace(User CurrentUser, EditPlaceJSON modifiedPlace)
         {
             var place = _context.Places
                 .FirstOrDefault(r => r.PlaceId == modifiedPlace.PlaceId && r.Region.UserId == CurrentUser.UserId);
+
 
             if (place != null)
             {
                 try
                 {
-                    //place.
+                    place.PlaceName = modifiedPlace.PlaceName;
+                    place.Latitude = modifiedPlace.Latitude;
+                    place.Longitude = modifiedPlace.Longitude;
+                    place.PlaceType = modifiedPlace.PlaceType;
                     _context.SaveChanges();
                     return true;
                 }
@@ -182,14 +186,56 @@ namespace Praca_dyplomowa.Services
                 return false;
         }
 
-        public bool AddPlace(User CurrentUser, NewRegionJSON region)
+        public bool AddPlace(User CurrentUser, NewPlaceJSON newPlace)
         {
-            throw new NotImplementedException();
+            var ifExist = _context.Places
+                .Count(r => r.PlaceName.Equals(newPlace.PlaceName) && r.Region.UserId == CurrentUser.UserId);
+
+            if (ifExist == 0)
+            {
+                try
+                {
+                    var place = new Place
+                    {
+                        PlaceName = newPlace.PlaceName,
+                        Latitude = newPlace.Latitude,
+                        Longitude = newPlace.Longitude,
+                        PlaceType = newPlace.PlaceType,
+                        RegionId = newPlace.BelongRegionId,
+                    };
+                    _context.Places.Add(place);
+                    _context.SaveChanges();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            else
+                return false;
         }
 
         public bool DeletePlace(User CurrentUser, RemoveIdJSON removeId)
         {
-            throw new NotImplementedException();
+            var place = _context.Places
+                .FirstOrDefault(r => r.PlaceId == removeId.Id && r.Region.UserId == CurrentUser.UserId);
+
+            if (place != null)
+            {
+                try
+                {
+                    _context.Places.Remove(place);
+                    _context.SaveChanges();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            else
+                return false;
         }
 
         public List<RouteJSON> GetRoutes(User CurrentUser)

@@ -76,6 +76,37 @@ namespace Praca_dyplomowa.Controllers
             return Ok(returnData);
         }
 
+        [HttpPut("places/edit")]
+        public IActionResult EditPlace([FromBody] EditPlaceJSON modifiedPlace)
+        {
+            bool result = _regionService.EditPlace(CurrentUser, modifiedPlace);
+
+            if (result)
+                return Ok();
+            return BadRequest();
+        }
+
+        [HttpPost("places/add")]
+        public IActionResult AddPlace([FromBody] NewPlaceJSON newPlace)
+        {
+            bool result = _regionService.AddPlace(CurrentUser, newPlace);
+
+            if (result)
+                return Ok();
+            return BadRequest();
+        }
+
+        [HttpDelete("places/remove")]
+        public IActionResult DeletePlace([FromBody] RemoveIdJSON id)
+        {
+            bool result = _regionService.DeletePlace(CurrentUser, id);
+
+            if (result)
+                return Ok();
+            return BadRequest();
+        }
+
+
         [HttpGet]
         [Route("routes")]
         public IActionResult GetRoutes()
@@ -86,6 +117,36 @@ namespace Praca_dyplomowa.Controllers
                 return NoContent();
 
             return Ok(returnData);
+        }
+
+        [HttpPut("routes/edit")]
+        public IActionResult EditRoute([FromBody] EditPlaceJSON modifiedPlace)
+        {
+            bool result = _regionService.EditPlace(CurrentUser, modifiedPlace);
+
+            if (result)
+                return Ok();
+            return BadRequest();
+        }
+
+        [HttpPost("routes/add")]
+        public IActionResult AddRoute([FromBody] NewPlaceJSON newPlace)
+        {
+            bool result = _regionService.AddPlace(CurrentUser, newPlace);
+
+            if (result)
+                return Ok();
+            return BadRequest();
+        }
+
+        [HttpDelete("routes/remove")]
+        public IActionResult DeleteRoute([FromBody] RemoveIdJSON id)
+        {
+            bool result = _regionService.DeletePlace(CurrentUser, id);
+
+            if (result)
+                return Ok();
+            return BadRequest();
         }
     }
 }
