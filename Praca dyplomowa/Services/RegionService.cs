@@ -188,10 +188,13 @@ namespace Praca_dyplomowa.Services
 
         public bool AddPlace(User CurrentUser, NewPlaceJSON newPlace)
         {
-            var ifExist = _context.Places
-                .Count(r => r.PlaceName.Equals(newPlace.PlaceName) && r.Region.UserId == CurrentUser.UserId);
+            var ifPlaceExist = _context.Places
+                .Count(p => p.PlaceName.Equals(newPlace.PlaceName) && p.Region.UserId == CurrentUser.UserId);
 
-            if (ifExist == 0)
+            var ifRegionExist = _context.Regions
+                .Count(r => r.RegionId == newPlace.BelongRegionId && r.UserId == CurrentUser.UserId);
+
+            if (ifPlaceExist == 0 && ifRegionExist == 1)
             {
                 try
                 {
