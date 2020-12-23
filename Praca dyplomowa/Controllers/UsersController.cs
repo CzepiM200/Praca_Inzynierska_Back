@@ -15,9 +15,8 @@ using Praca_dyplomowa.Models;
 
 namespace Praca_dyplomowa.Controllers
 {
-    
     [ApiController]
-    [Route("[controller]")]
+    [Route("[api/controller]")]
     public class UsersController : ControllerBase
     {
         private IUserService _userService;
@@ -49,10 +48,6 @@ namespace Praca_dyplomowa.Controllers
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim("id", user.UserId.ToString()),
-                    new Claim("kielba", "kieeeelba"),
-                    new Claim("papaja", "papaaaaaja"),
-                    new Claim("mienso", "miensoooo"),
-                    new Claim("cos", "xDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"),
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -90,14 +85,14 @@ namespace Praca_dyplomowa.Controllers
             }
         }
 
-        [Helpers.Authorize]
-        [HttpGet("all")]
-        public IActionResult GetAll()
-        {
-            var users = _userService.GetAll();
-            var model = _mapper.Map<IList<UserModel>>(users);
-            return Ok(model);
-        }
+        //[Helpers.Authorize]
+        //[HttpGet("all")]
+        //public IActionResult GetAll()
+        //{
+        //    var users = _userService.GetAll();
+        //    var model = _mapper.Map<IList<UserModel>>(users);
+        //    return Ok(model);
+        //}
 
         //[HttpGet("{id}")]
         //public IActionResult GetById(int id)
