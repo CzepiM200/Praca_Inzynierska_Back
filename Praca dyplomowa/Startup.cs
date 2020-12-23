@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -7,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using AutoMapper;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Praca_dyplomowa.Helpers;
@@ -44,6 +42,9 @@ namespace Praca_dyplomowa
             // configure Regions for application services
             services.AddScoped<IRegionService, RegionService>();
 
+            // configure Trainings for application services
+            services.AddScoped<IActivityService, ActivityService>();
+
             // connection string do bazy
             services.AddDbContext<ProgramContext>(options =>
                 options.UseMySql("server=localhost;port=3306;database=organizer;uid=root;password=admin"));
@@ -51,7 +52,7 @@ namespace Praca_dyplomowa
 
             // configure jwt authentication
             var appSettings = appSettingsSection.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes("Has³o123");
+            //var key = Encoding.ASCII.GetBytes("Has³o123");
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -133,10 +134,8 @@ namespace Praca_dyplomowa
             // Endpoint Routing Middleware (UseEndpoints with MapRazorPages) to add Razor Pages endpoints to the request pipeline.
             app.UseEndpoints(endpoints =>
             {
-                //endpoints.MapControllers();
-                endpoints.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=WeatherForecast}/{action=Get}/{id?}");
+                endpoints.MapControllers();
+
             });
         }
     }

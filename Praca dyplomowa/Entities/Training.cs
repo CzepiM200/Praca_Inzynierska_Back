@@ -25,7 +25,9 @@ namespace Praca_dyplomowa.Entities
 
         // Użytkownik do którego należy
         public User User { get; set; }
+        public int UserId { get; set; }
         // Przebyta droga
         public Route Route { get; set; }
+        public int RouteId { get; set; }
     }
 }

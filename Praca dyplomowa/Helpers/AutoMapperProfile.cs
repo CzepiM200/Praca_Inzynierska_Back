@@ -11,6 +11,10 @@ namespace Praca_dyplomowa.Helpers
             CreateMap<User, UserModel>();
             CreateMap<RegisterModel, User>();
             CreateMap<UpdateModel, User>();
+
+            CreateMap<Training, TrainingJSON>();
+            CreateMap<EditTrainingJSON, Training>();
+            CreateMap<NewTrainingJSON, Training>();
         }
     }
 }

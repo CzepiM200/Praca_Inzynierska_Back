@@ -89,10 +89,4 @@ namespace Praca_dyplomowa.Models
         public int DescentPosition { get; set; }
         public int BelongPlaceId { get; set; }
     }
-
-
-    public class RemoveIdJSON
-    {
-        public int Id { get; set; }
-    }
 }
