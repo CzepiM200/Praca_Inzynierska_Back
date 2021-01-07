@@ -21,11 +21,12 @@ namespace Praca_dyplomowa.Controllers
             _regionService = regionService;
         }
 
-        [HttpGet]
-        [Route("regions")]
-        public IActionResult GetRegions()
+        // TODO add pagination!!!
+        [HttpGet("regions/{page}/{number}")]
+        public IActionResult GetRegions(int page, int number)
         {
-            var returnData = _regionService.GetRegions(CurrentUser);
+            PageJSON pageJSON = new PageJSON { Page = page, Number = number };
+            var returnData = _regionService.GetRegions(CurrentUser, pageJSON);
 
             if (returnData == null)
                 return NoContent();
@@ -64,11 +65,11 @@ namespace Praca_dyplomowa.Controllers
         }
 
 
-        [HttpGet]
-        [Route("places")]
-        public IActionResult GetPlaces()
+        [HttpGet("places/{page}/{number}")]
+        public IActionResult GetPlaces(int page, int number)
         {
-            var returnData = _regionService.GetPlaces(CurrentUser);
+            PageJSON pageJSON = new PageJSON { Page = page, Number = number };
+            var returnData = _regionService.GetPlaces(CurrentUser, pageJSON);
 
             if (returnData == null)
                 return NoContent();
@@ -107,11 +108,11 @@ namespace Praca_dyplomowa.Controllers
         }
 
 
-        [HttpGet]
-        [Route("routes")]
-        public IActionResult GetRoutes()
+        [HttpGet("routes/{page}/{number}")]
+        public IActionResult GetRoutes(int page, int number)
         {
-            var returnData = _regionService.GetRoutes(CurrentUser);
+            PageJSON pageJSON = new PageJSON { Page = page, Number = number };
+            var returnData = _regionService.GetRoutes(CurrentUser, pageJSON);
 
             if (returnData == null)
                 return NoContent();

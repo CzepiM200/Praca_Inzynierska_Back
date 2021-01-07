@@ -16,7 +16,7 @@ using Praca_dyplomowa.Models;
 namespace Praca_dyplomowa.Controllers
 {
     [ApiController]
-    [Route("[api/controller]")]
+    [Route("[controller]")]
     public class UsersController : ControllerBase
     {
         private IUserService _userService;
@@ -62,6 +62,7 @@ namespace Praca_dyplomowa.Controllers
                 UserName = user.UserName,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
+                Email = user.Email,
                 Token = tokenString
             });
         }

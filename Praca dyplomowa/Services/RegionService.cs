@@ -11,17 +11,17 @@ namespace Praca_dyplomowa.Services
 {
     public interface IRegionService
     {
-        List<RegionJSON> GetRegions(User CurrentUser);
+        List<RegionJSON> GetRegions(User CurrentUser, PageJSON page);
         bool EditRegion(User CurrentUser, RegionJSON modifiedRegion);
         bool AddRegion(User CurrentUser, NewRegionJSON newRegion);
         bool DeleteRegion(User CurrentUser, RemoveIdJSON removeId);
 
-        List<PlaceJSON> GetPlaces(User CurrentUser);
+        List<PlaceJSON> GetPlaces(User CurrentUser, PageJSON page);
         bool EditPlace(User CurrentUser, EditPlaceJSON modifiedPlace);
         bool AddPlace(User CurrentUser, NewPlaceJSON newPlace);
         bool DeletePlace(User CurrentUser, RemoveIdJSON removeId);
 
-        List<RouteJSON> GetRoutes(User CurrentUser);
+        List<RouteJSON> GetRoutes(User CurrentUser, PageJSON page);
         bool EditRoute(User CurrentUser, EditRouteJSON modifiedRoute);
         bool AddRoute(User CurrentUser, NewRouteJSON newRoute);
         bool DeleteRoute(User CurrentUser, RemoveIdJSON removeId);
@@ -38,21 +38,34 @@ namespace Praca_dyplomowa.Services
             _context = context;
         }
 
-        public List<RegionJSON> GetRegions(User CurrentUser)
+        public List<RegionJSON> GetRegions(User CurrentUser, PageJSON page)
         {
             var userRegions = _context.Regions
-                .Where(r => r.UserId == CurrentUser.UserId);
+                .Where(r => r.UserId == CurrentUser.UserId)
+                .Skip((page.Page - 1) * page.Number)
+                .Take(page.Number);
 
             if (userRegions.Count() == 0)
                 return null;
 
+            var userPlaces = GetPlaces(CurrentUser, new PageJSON { Page = 1, Number = 100 });
+
             var returnData = new List<RegionJSON>();
             foreach (var region in userRegions)
             {
+                var placesInRegion = new List<PlaceJSON>();
+                foreach (var place in userPlaces)
+                {
+                    if (place.BelongRegion.RegionId == region.RegionId)
+                    {
+                        placesInRegion.Add(place);
+                    }
+                }
                 returnData.Add(new RegionJSON
                 {
                     RegionId = region.RegionId,
-                    RegionName = region.RegionName
+                    RegionName = region.RegionName,
+                    Places = placesInRegion
                 });
             }
 
@@ -131,11 +144,13 @@ namespace Praca_dyplomowa.Services
                 return false;
         }
 
-        public List<PlaceJSON> GetPlaces(User CurrentUser)
+        public List<PlaceJSON> GetPlaces(User CurrentUser, PageJSON page)
         {
             var userPlaces = _context.Places
                 .Include(r => r.Region)
-                .Where(p => p.Region.UserId == CurrentUser.UserId);
+                .Where(p => p.Region.UserId == CurrentUser.UserId)
+                .Skip((page.Page - 1) * page.Number)
+                .Take(page.Number);
 
             if (userPlaces.Count() == 0)
                 return null;
@@ -241,12 +256,14 @@ namespace Praca_dyplomowa.Services
                 return false;
         }
 
-        public List<RouteJSON> GetRoutes(User CurrentUser)
+        public List<RouteJSON> GetRoutes(User CurrentUser, PageJSON page)
         {
             var userRoutes = _context.Routes
                 .Include(r => r.Place)
                 .Include(p => p.Place.Region)
-                .Where(r => r.Place.Region.UserId == CurrentUser.UserId);
+                .Where(r => r.Place.Region.UserId == CurrentUser.UserId)
+                .Skip((page.Page - 1) * page.Number)
+                .Take(page.Number);
 
             if (userRoutes.Count() == 0)
                 return null;

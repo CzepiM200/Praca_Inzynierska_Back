@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Praca_dyplomowa.Context;
 using Praca_dyplomowa.Entities;
 using Praca_dyplomowa.Models;
@@ -119,6 +120,7 @@ namespace Praca_dyplomowa.Services
         public List<TrainingJSON> GetTrainings(User CurrentUser, PageJSON page)
         {
             var userTrainings = _context.Trainings
+                .Include(r => r.Route)
                 .Where(t => t.User.UserId == CurrentUser.UserId)
                 .Skip((page.Page - 1) * page.Number)
                 .Take(page.Number);

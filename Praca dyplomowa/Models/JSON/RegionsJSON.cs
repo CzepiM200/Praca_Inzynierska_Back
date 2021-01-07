@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Praca_dyplomowa.Models
 {
@@ -6,6 +7,7 @@ namespace Praca_dyplomowa.Models
     {
         public int RegionId { get; set; }
         public String RegionName { get; set; }
+        public List<PlaceJSON> Places { get; set; }
     }
 
     public class NewRegionJSON

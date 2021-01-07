@@ -22,9 +22,10 @@ namespace Praca_dyplomowa.Controllers
             _activityService = activityService;
         }
 
-        [HttpGet]
-        public IActionResult GetTrainings([FromBody] PageJSON pageJSON)
+        [HttpGet("{page}/{number}")]
+        public IActionResult GetTrainings(int page, int number)
         {
+            PageJSON pageJSON = new PageJSON { Page = page, Number = number};
             var trainings = _activityService.GetTrainings(CurrentUser, pageJSON);
             return Ok(trainings);
         }
