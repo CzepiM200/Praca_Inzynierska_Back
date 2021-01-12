@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using AutoMapper;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.Google;
 using Praca_dyplomowa.Helpers;
 using Praca_dyplomowa.Services;
 using Praca_dyplomowa.Context;
@@ -57,7 +58,13 @@ namespace Praca_dyplomowa
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 //x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                //options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
             });
+            //.AddGoogle(options =>
+            //{
+            //    options.ClientId = "303201248383-b4tn3cojmbf9b1hovndfl13vm8uleans.apps.googleusercontent.com";
+            //    options.ClientSecret = "9VpO2AMLbI0m72wQU5aNeLxJ";
+            //});
             //.AddJwtBearer(x =>
             //{
             //    x.Events = new JwtBearerEvents
@@ -130,6 +137,8 @@ namespace Praca_dyplomowa
 
             // custom jwt auth middleware
             app.UseMiddleware<JwtMiddleware>();
+
+            
 
             // Endpoint Routing Middleware (UseEndpoints with MapRazorPages) to add Razor Pages endpoints to the request pipeline.
             app.UseEndpoints(endpoints =>

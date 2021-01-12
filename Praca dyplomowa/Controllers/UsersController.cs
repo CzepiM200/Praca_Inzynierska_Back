@@ -86,14 +86,39 @@ namespace Praca_dyplomowa.Controllers
             }
         }
 
-        //[Helpers.Authorize]
-        //[HttpGet("all")]
-        //public IActionResult GetAll()
-        //{
-        //    var users = _userService.GetAll();
-        //    var model = _mapper.Map<IList<UserModel>>(users);
-        //    return Ok(model);
-        //}
+        [HttpPost("authenticate/google")]
+        public IActionResult AuthenticateGoogle([FromBody] GoogleTokenModel model)
+        {
+            var user = _userService.AuthenticateGoogle(model.Email, model.GoogleId, model.GoogleToken);
+
+            if (user == null)
+                return BadRequest(new { message = "Google authenticate failed" });
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim("id", user.UserId.ToString()),
+                }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+
+            // return basic user info and authentication token
+            return Ok(new
+            {
+                Id = user.UserId,
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Token = tokenString
+            });
+        }
 
         //[HttpGet("{id}")]
         //public IActionResult GetById(int id)

@@ -9,12 +9,18 @@ using System.Text;
 using Praca_dyplomowa.Entities;
 using Praca_dyplomowa.Helpers;
 using Praca_dyplomowa.Context;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
+using Praca_dyplomowa.Models;
+using Newtonsoft.Json;
 
 namespace Praca_dyplomowa.Services
 {
     public interface IUserService
     {
         User Authenticate(string username, string password);
+        User AuthenticateGoogle(string email, string googleId, string googleToken);
         IEnumerable<User> GetAll();
         User GetById(int id);
         User Create(User user, string password);
@@ -25,7 +31,7 @@ namespace Praca_dyplomowa.Services
     public class UserService : IUserService
     {
         private ProgramContext _context;
-
+        
         public UserService(ProgramContext context)
         {
             _context = context;
@@ -48,6 +54,47 @@ namespace Praca_dyplomowa.Services
 
             // authentication successful
             return user;
+        }
+
+        public User AuthenticateGoogle(string email, string googleId, string googleToken)
+        {
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(googleToken))
+                return null;
+
+            GoogleResponseModel googleResponse = CheckGoogleToken(googleToken);
+
+            if (googleResponse.Status == false)
+                return null;
+
+            var user = _context.Users.SingleOrDefault(x => x.UserGoogleId.Equals(googleResponse.Sub));
+            if (user == null)
+            {
+                var userWithSameEmail = _context.Users.Where(x => x.Email.Equals(email));
+                if (userWithSameEmail == null)
+                {
+                    try
+                    {
+                        User newUser = new User
+                        {
+                            Email = googleResponse.Email,
+                            FirstName = googleResponse.Given_name,
+                            LastName = googleResponse.Family_name,
+                            UserGoogleId = googleResponse.Sub
+                        };
+                        _context.Users.Add(newUser);
+                        _context.SaveChanges();
+                        return newUser;
+                    }
+                    catch (Exception)
+                    {
+                        return null;
+                    }
+                }
+                else
+                    return null;
+            }
+            else
+                return user;
         }
 
         public IEnumerable<User> GetAll()
@@ -173,6 +220,28 @@ namespace Praca_dyplomowa.Services
             }
 
             return true;
+        }
+    
+        private static GoogleResponseModel CheckGoogleToken(string googleToken)
+        {
+            HttpClient httpClient = new HttpClient();
+            var URL = "https://oauth2.googleapis.com/tokeninfo?id_token=" + googleToken;
+
+            try
+            {
+                Task<string> result = httpClient.GetStringAsync(URL);
+                string checkResult = result.Result; 
+                GoogleResponseModel googleResponseModel = JsonConvert.DeserializeObject<GoogleResponseModel>(checkResult);
+                googleResponseModel.Status = true;
+                httpClient.Dispose();
+                return googleResponseModel;
+            }
+            catch (Exception)
+            {
+                GoogleResponseModel googleResponseModel = new GoogleResponseModel { Status = false };
+                httpClient.Dispose();
+                return googleResponseModel;
+            }
         }
     }
 }
