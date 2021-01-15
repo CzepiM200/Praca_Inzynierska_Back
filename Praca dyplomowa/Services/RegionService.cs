@@ -22,6 +22,7 @@ namespace Praca_dyplomowa.Services
         bool DeletePlace(User CurrentUser, RemoveIdJSON removeId);
 
         List<RouteJSON> GetRoutes(User CurrentUser, PageJSON page);
+        List<SimpleRouteJSON> GetRoutesByPlaceId(User CurrentUser, int placeId);
         bool EditRoute(User CurrentUser, EditRouteJSON modifiedRoute);
         bool AddRoute(User CurrentUser, NewRouteJSON newRoute);
         bool DeleteRoute(User CurrentUser, RemoveIdJSON removeId);
@@ -296,6 +297,29 @@ namespace Praca_dyplomowa.Services
                             RegionName = route.Place.Region.RegionName
                         },
                     },
+                });
+            }
+
+            return returnData;
+        }
+
+        public List<SimpleRouteJSON> GetRoutesByPlaceId(User CurrentUser, int  placeId)
+        {
+            var userRoutes = _context.Routes
+                .Include(r => r.Place)
+                .Include(p => p.Place.Region)
+                .Where(r => r.Place.Region.UserId == CurrentUser.UserId && r.PlaceId == placeId);
+
+            if (userRoutes.Count() == 0)
+                return null;
+
+            var returnData = new List<SimpleRouteJSON>();
+            foreach (var route in userRoutes)
+            {
+                returnData.Add(new SimpleRouteJSON
+                {
+                    RouteId = route.RouteId,
+                    RouteName = route.RouteName,
                 });
             }
 

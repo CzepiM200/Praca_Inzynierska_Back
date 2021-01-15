@@ -45,6 +45,11 @@ namespace Praca_dyplomowa.Models
         public int BelongRegionId { get; set; }
     }
 
+    public class SimpleRouteJSON
+    {
+        public int RouteId { get; set; }
+        public String RouteName { get; set; }
+    }
 
     public class RouteJSON
     {

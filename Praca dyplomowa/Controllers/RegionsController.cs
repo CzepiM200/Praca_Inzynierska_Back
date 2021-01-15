@@ -21,7 +21,6 @@ namespace Praca_dyplomowa.Controllers
             _regionService = regionService;
         }
 
-        // TODO add pagination!!!
         [HttpGet("regions/{page}/{number}")]
         public IActionResult GetRegions(int page, int number)
         {
@@ -113,6 +112,17 @@ namespace Praca_dyplomowa.Controllers
         {
             PageJSON pageJSON = new PageJSON { Page = page, Number = number };
             var returnData = _regionService.GetRoutes(CurrentUser, pageJSON);
+
+            if (returnData == null)
+                return NoContent();
+
+            return Ok(returnData);
+        }
+        
+        [HttpGet("routes/{place}")]
+        public IActionResult GetRoutes(int place)
+        {
+            var returnData = _regionService.GetRoutesByPlaceId(CurrentUser, place);
 
             if (returnData == null)
                 return NoContent();
