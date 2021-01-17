@@ -40,7 +40,7 @@ namespace Praca_dyplomowa.Controllers
         }
 
         [HttpPost("add")]
-        public IActionResult AddRegion([FromBody] NewTrainingJSON newTraining)
+        public IActionResult AddTraining([FromBody] NewTrainingJSON newTraining)
         {
             var addResult = _activityService.AddTraining(CurrentUser, newTraining);
             if (addResult)
@@ -49,7 +49,7 @@ namespace Praca_dyplomowa.Controllers
         }
 
         [HttpPut("edit")]
-        public IActionResult EditRegion([FromBody] EditTrainingJSON editTraining)
+        public IActionResult EditTraining([FromBody] EditTrainingJSON editTraining)
         {
             var editResult = _activityService.EditTraining(CurrentUser, editTraining);
             if (editResult)
@@ -58,7 +58,7 @@ namespace Praca_dyplomowa.Controllers
         }
 
         [HttpDelete("remove")]
-        public IActionResult DeleteRegion([FromBody] RemoveIdJSON removeId)
+        public IActionResult DeleteTraining([FromBody] RemoveIdJSON removeId)
         {
             var deleteResult = _activityService.DeleteTraining(CurrentUser, removeId);
             if (deleteResult)
