@@ -42,8 +42,11 @@ namespace Praca_dyplomowa.Services
         public List<RegionJSON> GetRegions(User CurrentUser, PageJSON page)
         {
             var userRegions = _context.Regions
-                .Where(r => r.UserId == CurrentUser.UserId)
-                .Skip((page.Page - 1) * page.Number)
+                .Where(r => r.UserId == CurrentUser.UserId);
+                
+
+            if(page.Number != 0 && page.Page != 0)
+                userRegions.Skip((page.Page - 1) * page.Number)
                 .Take(page.Number);
 
             if (userRegions.Count() == 0)
@@ -149,8 +152,11 @@ namespace Praca_dyplomowa.Services
         {
             var userPlaces = _context.Places
                 .Include(r => r.Region)
-                .Where(p => p.Region.UserId == CurrentUser.UserId)
-                .Skip((page.Page - 1) * page.Number)
+                .Where(p => p.Region.UserId == CurrentUser.UserId);
+                
+
+            if (page.Number != 0 && page.Page != 0)
+                userPlaces.Skip((page.Page - 1) * page.Number)
                 .Take(page.Number);
 
             if (userPlaces.Count() == 0)
@@ -262,8 +268,11 @@ namespace Praca_dyplomowa.Services
             var userRoutes = _context.Routes
                 .Include(r => r.Place)
                 .Include(p => p.Place.Region)
-                .Where(r => r.Place.Region.UserId == CurrentUser.UserId)
-                .Skip((page.Page - 1) * page.Number)
+                .Where(r => r.Place.Region.UserId == CurrentUser.UserId);
+                
+
+            if (page.Number != 0 && page.Page != 0)
+                userRoutes.Skip((page.Page - 1) * page.Number)
                 .Take(page.Number);
 
             if (userRoutes.Count() == 0)
