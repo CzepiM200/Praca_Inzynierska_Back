@@ -15,7 +15,6 @@ namespace Praca_dyplomowa.Models
         public String RegionName { get; set; }
     }
 
-
     public class PlaceJSON
     {
         public int PlaceId { get; set; }
