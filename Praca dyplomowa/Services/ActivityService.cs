@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Praca_dyplomowa.Context;
@@ -41,8 +40,18 @@ namespace Praca_dyplomowa.Services
             {
                 try
                 {
+                    var route = _context.Routes
+                        .FirstOrDefault(r => r.RouteId == newTraining.RouteId && r.Place.Region.UserId == CurrentUser.UserId);
+
                     var tempTraining = _mapper.Map<Training>(newTraining);
                     tempTraining.UserId = CurrentUser.UserId;
+                    tempTraining.TrainingType = route.RouteType;
+                    if (newTraining.Distance == 0)
+                        if (route.RouteType == 1)
+                            tempTraining.Distance = route.Length;
+                        else
+                            tempTraining.Distance = route.HeightDifference;
+
                     _context.Trainings.Add(tempTraining);
                     _context.SaveChanges();
                     return true;
@@ -94,7 +103,6 @@ namespace Praca_dyplomowa.Services
                     userTraining.EndTime = editTraining.EndTime;
                     userTraining.ActivityTime = editTraining.ActivityTime;
                     userTraining.Distance = editTraining.Distance;
-                    userTraining.RouteId = editTraining.RouteId;
                     _context.SaveChanges();
                     return true;
                 }
@@ -123,7 +131,8 @@ namespace Praca_dyplomowa.Services
                 .Include(r => r.Route)
                 .Where(t => t.User.UserId == CurrentUser.UserId)
                 .Skip((page.Page - 1) * page.Number)
-                .Take(page.Number);
+                .Take(page.Number)
+                .OrderByDescending(d => d.StartTime);
 
             return _mapper.Map<List<TrainingJSON>>(userTrainings);
         }
