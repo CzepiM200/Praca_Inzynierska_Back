@@ -26,12 +26,10 @@ namespace Praca_dyplomowa.Models
         public String EndTime { get; set; }
         public int ActivityTime { get; set; }
         public int Distance { get; set; }
-        public int RouteId { get; set; }
     }
 
     public class NewTrainingJSON
     {
-        public int TrainingType { get; set; }
         public String TrainingName { get; set; }
         public String TrainingDescription { get; set; }
         public String StartTime { get; set; }
