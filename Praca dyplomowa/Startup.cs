@@ -57,44 +57,7 @@ namespace Praca_dyplomowa
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                //x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                //options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
             });
-            //.AddGoogle(options =>
-            //{
-            //    options.ClientId = "303201248383-b4tn3cojmbf9b1hovndfl13vm8uleans.apps.googleusercontent.com";
-            //    options.ClientSecret = "9VpO2AMLbI0m72wQU5aNeLxJ";
-            //});
-            //.AddJwtBearer(x =>
-            //{
-            //    x.Events = new JwtBearerEvents
-            //    {
-            //        OnTokenValidated = context =>
-            //        {
-            //            var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
-            //            var userId = int.Parse(context.Principal.Identity.Name);
-            //            var user = userService.GetById(userId);
-            //            if (user == null)
-            //            {
-            //                // return unauthorized if user no longer exists
-            //                context.Fail("Unauthorized");
-            //            }
-            //            return Task.CompletedTask;
-            //        }
-            //    };
-            //    x.RequireHttpsMetadata = false;
-            //    x.SaveToken = true;
-            //    x.TokenValidationParameters = new TokenValidationParameters
-            //    {
-            //        ValidateIssuerSigningKey = true,
-            //        IssuerSigningKey = new SymmetricSecurityKey(key),
-            //        ValidateIssuer = false,
-            //        ValidateAudience = false
-            //    };
-            //});
-
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
