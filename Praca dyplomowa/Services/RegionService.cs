@@ -27,7 +27,7 @@ namespace Praca_dyplomowa.Services
         bool AddRoute(User CurrentUser, NewRouteJSON newRoute);
         bool DeleteRoute(User CurrentUser, RemoveIdJSON removeId);
 
-
+        ListsOfSimpleItems GetAllSimpleItems(User CurrentUser);
     }
 
     public class RegionService : IRegionService
@@ -103,7 +103,10 @@ namespace Praca_dyplomowa.Services
             var ifExist = _context.Regions
                 .Count(r => r.RegionName.Equals(newRegion.RegionName) && r.UserId == CurrentUser.UserId);
 
-            if(ifExist == 0)
+            var co = _context.Regions
+                .Where(r => r.RegionName.Equals(newRegion.RegionName) && r.UserId == CurrentUser.UserId);
+
+            if (ifExist == 0)
             {
                 try
                 {
@@ -424,6 +427,57 @@ namespace Praca_dyplomowa.Services
             }
             else
                 return false;
+        }
+
+        public ListsOfSimpleItems GetAllSimpleItems(User CurrentUser)
+        {
+            var userRegions = _context.Regions
+                .Where(r => r.UserId == CurrentUser.UserId);
+
+            var userPlaces = _context.Places
+                .Include(r => r.Region)
+                .Where(p => p.Region.UserId == CurrentUser.UserId);
+
+            var userRoutes = _context.Routes
+                .Include(r => r.Place)
+                .Include(p => p.Place.Region)
+                .Where(r => r.Place.Region.UserId == CurrentUser.UserId);
+
+            var list = new ListsOfSimpleItems();
+            list.Regions = new List<SimpleRegionJSON>();
+            list.Places = new List<SimplePlaceJSON>();
+            list.Routes = new List<SimpleRouteJSON>();
+
+            foreach (var region in userRegions)
+            {
+                list.Regions.Add(new SimpleRegionJSON
+                {
+                    RegionId = region.RegionId,
+                    RegionName = region.RegionName
+                });
+            }
+
+            foreach (var place in userPlaces)
+            {
+                list.Places.Add(new SimplePlaceJSON
+                {
+                    PlaceId = place.PlaceId,
+                    PlaceName = place.PlaceName,
+                    BelongRegionId = place.RegionId
+                });
+            }
+
+            foreach (var route in userRoutes)
+            {
+                list.Routes.Add(new SimpleRouteJSON
+                {
+                    RouteId = route.RouteId,
+                    RouteName = route.RouteName,
+                    BelongPlaceId = route.PlaceId,
+                });
+            }
+
+            return list;
         }
     }
 }

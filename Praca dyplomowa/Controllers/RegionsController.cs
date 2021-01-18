@@ -159,5 +159,16 @@ namespace Praca_dyplomowa.Controllers
                 return Ok();
             return BadRequest();
         }
+
+        [HttpGet("all")]
+        public IActionResult GetAllSimpleItems()
+        {
+            var returnData = _regionService.GetAllSimpleItems(CurrentUser);
+
+            if (returnData == null)
+                return NoContent();
+
+            return Ok(returnData);
+        }
     }
 }

@@ -10,6 +10,12 @@ namespace Praca_dyplomowa.Models
         public List<PlaceJSON> Places { get; set; }
     }
 
+    public class SimpleRegionJSON
+    {
+        public int RegionId { get; set; }
+        public String RegionName { get; set; }
+    }
+
     public class NewRegionJSON
     {
         public String RegionName { get; set; }
@@ -24,6 +30,12 @@ namespace Praca_dyplomowa.Models
         public int PlaceType { get; set; }
 
         public RegionJSON BelongRegion { get; set; }
+    }
+    public class SimplePlaceJSON
+    {
+        public int PlaceId { get; set; }
+        public String PlaceName { get; set; }
+        public int BelongRegionId { get; set; }
     }
 
     public class EditPlaceJSON
@@ -46,8 +58,9 @@ namespace Praca_dyplomowa.Models
 
     public class SimpleRouteJSON
     {
-        public int RouteId { get; set; }
+        public int RouteId { get; set; } 
         public String RouteName { get; set; }
+        public int BelongPlaceId { get; set; }
     }
 
     public class RouteJSON
@@ -94,5 +107,12 @@ namespace Praca_dyplomowa.Models
         public int Rings { get; set; }
         public int DescentPosition { get; set; }
         public int BelongPlaceId { get; set; }
+    }
+
+    public class ListsOfSimpleItems
+    {
+        public List<SimpleRegionJSON> Regions { get; set; }
+        public List<SimplePlaceJSON> Places { get; set; }
+        public List<SimpleRouteJSON> Routes { get; set; }
     }
 }
