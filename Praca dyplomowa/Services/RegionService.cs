@@ -17,11 +17,13 @@ namespace Praca_dyplomowa.Services
         bool DeleteRegion(User CurrentUser, RemoveIdJSON removeId);
 
         List<PlaceJSON> GetPlaces(User CurrentUser, PageJSON page);
+        PlaceJSON GetPlaceDetails(User CurrentUser, int id);
         bool EditPlace(User CurrentUser, EditPlaceJSON modifiedPlace);
         bool AddPlace(User CurrentUser, NewPlaceJSON newPlace);
         bool DeletePlace(User CurrentUser, RemoveIdJSON removeId);
 
         List<RouteJSON> GetRoutes(User CurrentUser, PageJSON page);
+        RouteJSON GetRouteDetails(User CurrentUser, int id);
         List<SimpleRouteJSON> GetRoutesByPlaceId(User CurrentUser, int placeId);
         bool EditRoute(User CurrentUser, EditRouteJSON modifiedRoute);
         bool AddRoute(User CurrentUser, NewRouteJSON newRoute);
@@ -185,6 +187,31 @@ namespace Praca_dyplomowa.Services
             return returnData;
         }
 
+        public PlaceJSON GetPlaceDetails(User CurrentUser, int id)
+        {
+            var userPlace = _context.Places
+                .Include(r => r.Region)
+                .FirstOrDefault(p => p.Region.UserId == CurrentUser.UserId && p.PlaceId == id);
+
+            if (userPlace == null)
+                return null;
+
+            var returnData = new PlaceJSON
+            {
+                PlaceId = userPlace.PlaceId,
+                PlaceName = userPlace.PlaceName,
+                Latitude = userPlace.Latitude,
+                Longitude = userPlace.Longitude,
+                PlaceType = userPlace.PlaceType,
+                BelongRegion = new RegionJSON
+                {
+                    RegionId = userPlace.Region.RegionId,
+                    RegionName = userPlace.Region.RegionName
+                },
+            };
+
+            return returnData;
+        }
         public bool EditPlace(User CurrentUser, EditPlaceJSON modifiedPlace)
         {
             var place = _context.Places
@@ -296,6 +323,7 @@ namespace Praca_dyplomowa.Services
                     Scale = route.Scale,
                     Rating = route.Rating,
                     Rings = route.Rings,
+                    DescentPosition = route.DescentPosition,
                     BelongPlace = new PlaceJSON
                     {
                         PlaceId = route.Place.PlaceId,
@@ -334,6 +362,46 @@ namespace Praca_dyplomowa.Services
                     RouteName = route.RouteName,
                 });
             }
+
+            return returnData;
+        }
+
+        public RouteJSON GetRouteDetails(User CurrentUser, int id)
+        {
+            var userRoute = _context.Routes
+                .Include(r => r.Place)
+                .Include(p => p.Place.Region)
+                .FirstOrDefault(r => r.Place.Region.UserId == CurrentUser.UserId && r.RouteId == id);
+
+            if (userRoute == null)
+                return null;
+
+            var returnData = new RouteJSON{
+                RouteId = userRoute.RouteId,
+                RouteName = userRoute.RouteName,
+                RouteType = userRoute.RouteType,
+                Length = userRoute.Length,
+                HeightDifference = userRoute.HeightDifference,
+                Accomplish = userRoute.Accomplish,
+                Material = userRoute.Material,
+                Scale = userRoute.Scale,
+                Rating = userRoute.Rating,
+                Rings = userRoute.Rings,
+                DescentPosition = userRoute.DescentPosition,
+                BelongPlace = new PlaceJSON
+                {
+                    PlaceId = userRoute.Place.PlaceId,
+                    PlaceName = userRoute.Place.PlaceName,
+                    Latitude = userRoute.Place.Latitude,
+                    Longitude = userRoute.Place.Longitude,
+                    PlaceType = userRoute.Place.PlaceType,
+                    BelongRegion = new RegionJSON
+                    {
+                        RegionId = userRoute.Place.Region.RegionId,
+                        RegionName = userRoute.Place.Region.RegionName
+                    },
+                }
+            };
 
             return returnData;
         }
@@ -420,8 +488,9 @@ namespace Praca_dyplomowa.Services
                     _context.SaveChanges();
                     return true;
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    // Gry trasy już istnieją
                     return false;
                 }
             }
@@ -479,5 +548,7 @@ namespace Praca_dyplomowa.Services
 
             return list;
         }
+
+        
     }
 }

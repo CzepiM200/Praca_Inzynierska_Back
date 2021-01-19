@@ -76,6 +76,17 @@ namespace Praca_dyplomowa.Controllers
             return Ok(returnData);
         }
 
+        [HttpGet("places/details/{id}")]
+        public IActionResult GetPlaceDetails(int id)
+        {
+            var returnData = _regionService.GetPlaceDetails(CurrentUser, id);
+
+            if (returnData == null)
+                return NoContent();
+
+            return Ok(returnData);
+        }
+
         [HttpPut("places/edit")]
         public IActionResult EditPlace([FromBody] EditPlaceJSON modifiedPlace)
         {
@@ -123,6 +134,17 @@ namespace Praca_dyplomowa.Controllers
         public IActionResult GetRoutes(int place)
         {
             var returnData = _regionService.GetRoutesByPlaceId(CurrentUser, place);
+
+            if (returnData == null)
+                return NoContent();
+
+            return Ok(returnData);
+        }
+
+        [HttpGet("routes/details/{id}")]
+        public IActionResult GetRouteDetails(int id)
+        {
+            var returnData = _regionService.GetRouteDetails(CurrentUser, id);
 
             if (returnData == null)
                 return NoContent();
