@@ -130,9 +130,11 @@ namespace Praca_dyplomowa.Services
             var userTrainings = _context.Trainings
                 .Include(r => r.Route)
                 .Where(t => t.User.UserId == CurrentUser.UserId)
+                .OrderByDescending(d => d.StartTime)
                 .Skip((page.Page - 1) * page.Number)
-                .Take(page.Number)
-                .OrderByDescending(d => d.StartTime);
+                .Take(page.Number);
+
+
 
             return _mapper.Map<List<TrainingJSON>>(userTrainings);
         }

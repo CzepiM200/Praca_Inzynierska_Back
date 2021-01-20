@@ -21,7 +21,7 @@ namespace Praca_dyplomowa.Services
     {
         User Authenticate(string username, string password);
         User AuthenticateGoogle(string email, string googleId, string googleToken);
-        IEnumerable<User> GetAll();
+        // bool RevokeToken(string token, string ipAddress);
         User GetById(int id);
         User Create(User user, string password);
         void Update(User user, string password = null);
@@ -97,40 +97,24 @@ namespace Praca_dyplomowa.Services
                 return user;
         }
 
-        public IEnumerable<User> GetAll()
-        {
-            return _context.Users;
-        }
-
         public User GetById(int id)
         {
             return _context.Users.Find(id);
         }
 
-        // Tworzenie nowego użytkownika
         public User Create(User user, string password)
         {
-            // Sprawdzanie czy hasło zostało wprowadzone
             if (string.IsNullOrWhiteSpace(password))
-                throw new AppException("001. Password is required");
+                throw new AppException("Wymagane jest wprowadzenie hasła");
 
-            // Sprawdzanie czy nazwa użytkownika występuje już w bazie
             if (_context.Users.Any(x => x.UserName == user.UserName))
-                throw new AppException("002. UserName \"" + user.UserName + "\" is already taken");
-
-            // Sprawdzanie czy email występuje już w bazie
-            if (_context.Users.Any(x => x.Email == user.Email))
-                throw new AppException("003. Email \"" + user.Email + "\" is already taken");
+                throw new AppException("Nazwa uzytkownika " + user.UserName + " jest już zajęta.");
 
             byte[] passwordHash, passwordSalt;
-            // Tworzenie hash i salt
             CreatePasswordHash(password, out passwordHash, out passwordSalt);
-
-            // Stawianie hash i salt nowemu użytkownikowi
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
 
-            // Dodawanie nowego użytkownika do bazy
             _context.Users.Add(user);
             _context.SaveChanges();
 

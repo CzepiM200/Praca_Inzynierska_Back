@@ -11,6 +11,11 @@ namespace Praca_dyplomowa.Models
         public string Password { get; set; }
     }
 
+    public class RevokeTokenModel
+    {
+        public string Token { get; set; }
+    }
+
     public class GoogleAuthenticateModel
     {
         [Required]

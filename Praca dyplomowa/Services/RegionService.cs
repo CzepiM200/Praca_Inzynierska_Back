@@ -56,6 +56,9 @@ namespace Praca_dyplomowa.Services
 
             var userPlaces = GetPlaces(CurrentUser, new PageJSON { Page = 1, Number = 100 });
 
+            if (userPlaces == null)
+                userPlaces = new List<PlaceJSON>();
+
             var returnData = new List<RegionJSON>();
             foreach (var region in userRegions)
             {

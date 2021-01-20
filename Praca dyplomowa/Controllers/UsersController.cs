@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using System.IdentityModel.Tokens.Jwt;
@@ -7,7 +6,6 @@ using Microsoft.Extensions.Options;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
 using Praca_dyplomowa.Helpers;
 using Praca_dyplomowa.Services;
 using Praca_dyplomowa.Entities;
@@ -70,19 +68,16 @@ namespace Praca_dyplomowa.Controllers
         [HttpPost("register")]
         public IActionResult Register([FromBody] RegisterModel model)
         {
-            // map model to entity
             var user = _mapper.Map<User>(model);
 
             try
             {
-                // create user
                 _userService.Create(user, model.Password);
                 return Ok();
             }
             catch (AppException ex)
             {
-                // return error message if there was an exception
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(ex.Message);
             }
         }
 
@@ -120,40 +115,30 @@ namespace Praca_dyplomowa.Controllers
             });
         }
 
-        //[HttpGet("{id}")]
-        //public IActionResult GetById(int id)
+        //[HttpPost("revoke-token")]
+        //public IActionResult RevokeToken([FromBody] RevokeTokenModel revokeTokenModel)
         //{
-        //    var user = _userService.GetById(id);
-        //    var model = _mapper.Map<UserModel>(user);
-        //    return Ok(model);
+        //    // accept token from request body or cookie
+        //    var token = revokeTokenModel.Token;
+        //    //?? Request.Cookies["refreshToken"];
+
+        //    if (string.IsNullOrEmpty(token))
+        //        return BadRequest(new { message = "Brak tokenu" });
+
+        //    var response = _userService.RevokeToken(token, ipAddress());
+
+        //    if (!response)
+        //        return NotFound(new { message = "Token not found" });
+
+        //    return Ok(new { message = "Token revoked" });
         //}
 
-        // SPOKO
-        //[HttpPut("{id}")]
-        //public IActionResult Update(int id, [FromBody] UpdateModel model)
+        //private string ipAddress()
         //{
-        //    // map model to entity and set id
-        //    var user = _mapper.Map<User>(model);
-        //    user.Id = id;
-
-        //    try
-        //    {
-        //        // update user 
-        //        _userService.Update(user, model.Password);
-        //        return Ok();
-        //    }
-        //    catch (AppException ex)
-        //    {
-        //        // return error message if there was an exception
-        //        return BadRequest(new { message = ex.Message });
-        //    }
-        //}
-
-        //[HttpDelete("{id}")]
-        //public IActionResult Delete(int id)
-        //{
-        //    _userService.Delete(id);
-        //    return Ok();
+        //    if (Request.Headers.ContainsKey("X-Forwarded-For"))
+        //        return Request.Headers["X-Forwarded-For"];
+        //    else
+        //        return HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
         //}
     }
 }
